@@ -54,8 +54,8 @@ app.post('/register', async (req, res) => {
         const verification = await verifyRegistrationResponse({
             response,
             expectedChallenge: user.challenge, // Use the stored challenge
-            expectedOrigin: "https://cred-front.onrender.com/", // Change to your actual domain
-            expectedRPID: "cred-front.onrender.com/", // Change to your actual domain
+            expectedOrigin: "https://cred-front.onrender.com", // Change to your actual domain
+            expectedRPID: "cred-front.onrender.com", // Change to your actual domain
         });
 
         console.log("verification");
@@ -97,8 +97,8 @@ app.post('/authenticate', async (req, res) => {
         const verification = await verifyAuthenticationResponse({
             response,
             expectedChallenge: "randomChallengeString", // Must match the challenge used in generate-authentication-options
-            expectedOrigin: "https://cred-front.onrender.com/", // Change to your actual domain
-            expectedRPID: "cred-front.onrender.com/", // Change to your actual domain
+            expectedOrigin: "https://cred-front.onrender.com", // Change to your actual domain
+            expectedRPID: "cred-front.onrender.com", // Change to your actual domain
             authenticator: user.credential,
         });
 
