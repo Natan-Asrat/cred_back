@@ -40,7 +40,9 @@ app.post('/register', async (req, res) => {
     if (!user) {
         return res.status(404).json({ error: "User not found" });
     }
-
+    console.log("in register")
+    console.log(response)
+    console.log("in try")
     try {
         const verification = await verifyRegistrationResponse({
             response,
@@ -49,7 +51,12 @@ app.post('/register', async (req, res) => {
             expectedRPID: "cred-front.onrender.com/", // Change to your actual domain
         });
 
+        console.log("verification")
+        console.log(verification)
+
         user.credential = verification; // Save the credential
+        console.log("user")
+        console.log(user)
         return res.json({ status: "Registration successful", credential: user.credential });
     } catch (error) {
         return res.status(400).json({ error: "Registration failed", details: error.message });
