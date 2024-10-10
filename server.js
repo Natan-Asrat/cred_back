@@ -16,7 +16,7 @@ app.post('/generate-registration-options', (req, res) => {
     const options = generateRegistrationOptions({
         rpName: "WebAuthDemo",
         rpID: "cred-front.onrender.com", // Change to your actual domain
-        userID: userID,
+        userID: Buffer.from(userID),
         userName: userEmail,
         userDisplayName: "Nats CEO",
         attestationType: 'direct',
