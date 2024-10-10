@@ -28,7 +28,7 @@ app.post('/generate-registration-options', (req, res) => {
     });
 
     users.set(userID, { email: userEmail, credential: null }); // Initialize user record
-    res.json(options);
+    return res.json(options);
 });
 
 app.post('/register', async (req, res) => {
@@ -48,9 +48,9 @@ app.post('/register', async (req, res) => {
         });
 
         user.credential = verification; // Save the credential
-        res.json({ status: "Registration successful", credential: user.credential });
+        return res.json({ status: "Registration successful", credential: user.credential });
     } catch (error) {
-        res.status(400).json({ error: "Registration failed", details: error.message });
+        return res.status(400).json({ error: "Registration failed", details: error.message });
     }
 });
 
@@ -66,7 +66,7 @@ app.post('/generate-authentication-options', (req, res) => {
         challenge: "randomChallengeString", // Use a secure random challenge in production
     });
 
-    res.json(options);
+    return res.json(options);
 });
 
 app.post('/authenticate', async (req, res) => {
@@ -86,9 +86,9 @@ app.post('/authenticate', async (req, res) => {
             authenticator: user.credential,
         });
 
-        res.json({ status: "Authentication successful", user: userEmail });
+        return res.json({ status: "Authentication successful", user: userEmail });
     } catch (error) {
-        res.status(400).json({ error: "Authentication failed", details: error.message });
+        return res.status(400).json({ error: "Authentication failed", details: error.message });
     }
 });
 
