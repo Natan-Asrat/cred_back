@@ -1,10 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { generateRegistrationOptions, generateAuthenticationOptions, verifyRegistrationResponse, verifyAuthenticationResponse } = require('@simplewebauthn/server');
+const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
-
+app.use(cors({ origin: 'https://cred-front.onrender.com' }));
 const users = new Map(); // Store user credentials temporarily in memory
 
 // Hardcoded user info for demo
