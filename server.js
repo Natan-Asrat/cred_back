@@ -79,11 +79,13 @@ app.post('/generate-authentication-options', async (req, res) => {
     }
     console.log("cred");
     console.log(user.credential);
+    const challenge = crypto.randomBytes(32).toString('base64');
 
     const options = await generateAuthenticationOptions({
         allowCredentials: [user.credential], // Allow only registered credentials
-        challenge: "randomChallengeString", // Use a secure random challenge in production
+        challenge: challenge, // Use a secure random challenge in production
     });
+    user.challenge = challenge; // Save the challenge for next authentication
 
     console.log("options");
     console.log(options);
@@ -102,7 +104,7 @@ app.post('/authenticate', async (req, res) => {
     try {
         const verification = await verifyAuthenticationResponse({
             response,
-            expectedChallenge: "randomChallengeString", // Must match the challenge used in generate-authentication-options
+            expectedChallenge: user.challenge, // Must match the challenge used in generate-authentication-options
             expectedOrigin: "https://cred-front.onrender.com", // Change to your actual domain
             expectedRPID: "cred-front.onrender.com", // Change to your actual domain
             authenticator: user.credential,
