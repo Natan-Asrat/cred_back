@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { generateRegistrationOptions, generateAuthenticationOptions, verifyRegistrationResponse, verifyAuthenticationResponse } = require('@simplewebauthn/server');
+const { isoUint8Array } = require( '@simplewebauthn/server/helpers');
+
 const cors = require('cors');
 
 const app = express();
@@ -16,7 +18,7 @@ app.post('/generate-registration-options', (req, res) => {
     const options = generateRegistrationOptions({
         rpName: "WebAuthDemo",
         rpID: "cred-front.onrender.com", // Change to your actual domain
-        userID: Buffer.from(userID),
+        userID: isoUint8Array.fromUTF8String(userID),
         userName: userEmail,
         userDisplayName: "Nats CEO",
         attestationType: 'direct',
