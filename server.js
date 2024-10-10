@@ -72,15 +72,21 @@ app.post('/register', async (req, res) => {
 
 app.post('/generate-authentication-options', async (req, res) => {
     const user = users.get(userID); // Get the user by userID
-
+    console.log("in generate-authentication-options");
+    console.log(user);
     if (!user || !user.credential) {
         return res.status(404).json({ error: "User not found or not registered" });
     }
+    console.log("cred");
+    console.log(user.credential);
 
     const options = await generateAuthenticationOptions({
         allowCredentials: [user.credential], // Allow only registered credentials
         challenge: "randomChallengeString", // Use a secure random challenge in production
     });
+
+    console.log("options");
+    console.log(options);
 
     return res.json(options);
 });
