@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { generateRegistrationOptions, generateAuthenticationOptions, verifyRegistrationResponse, verifyAuthenticationResponse } = require('@simplewebauthn/server');
 const { isoUint8Array } = require('@simplewebauthn/server/helpers');
+const crypto = require('crypto');
 
 const cors = require('cors');
 
