@@ -14,8 +14,8 @@ const users = new Map(); // Store user credentials temporarily in memory
 const userEmail = "natsceo@gmail.com";
 const userID = "user-id"; // Replace with any unique ID you want
 
-app.post('/generate-registration-options', (req, res) => {
-    const options = generateRegistrationOptions({
+app.post('/generate-registration-options', async (req, res) => {
+    const options = await generateRegistrationOptions({
         rpName: "WebAuthDemo",
         rpID: "cred-front.onrender.com", // Change to your actual domain
         userID: isoUint8Array.fromUTF8String(userID),
