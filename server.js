@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { generateRegistrationOptions, generateAuthenticationOptions, verifyRegistrationResponse, verifyAuthenticationResponse } = require('@simplewebauthn/server');
-const { isoUint8Array } = require( '@simplewebauthn/server/helpers');
+const { isoUint8Array } = require('@simplewebauthn/server/helpers');
 
 const cors = require('cors');
 
@@ -27,9 +27,14 @@ app.post('/generate-registration-options', async (req, res) => {
         ],
     });
 
-    users.set(userID, { email: userEmail, credential: null }); // Initialize user record
-    console.log(options)
-    console.log(users)
+    // Store the challenge with the user record
+    users.set(userID, { 
+        email: userEmail, 
+        credential: null, 
+        challenge: options.challenge // Store the challenge here
+    }); 
+    console.log(options);
+    console.log(users);
     return res.json(options);
 });
 
@@ -40,23 +45,25 @@ app.post('/register', async (req, res) => {
     if (!user) {
         return res.status(404).json({ error: "User not found" });
     }
-    console.log("in register")
-    console.log(response)
-    console.log("in try")
+
+    console.log("in register");
+    console.log(response);
+    console.log("in try");
+
     try {
         const verification = await verifyRegistrationResponse({
             response,
-            expectedChallenge: response.challenge,
+            expectedChallenge: user.challenge, // Use the stored challenge
             expectedOrigin: "https://cred-front.onrender.com/", // Change to your actual domain
             expectedRPID: "cred-front.onrender.com/", // Change to your actual domain
         });
 
-        console.log("verification")
-        console.log(verification)
+        console.log("verification");
+        console.log(verification);
 
         user.credential = verification; // Save the credential
-        console.log("user")
-        console.log(user)
+        console.log("user");
+        console.log(user);
         return res.json({ status: "Registration successful", credential: user.credential });
     } catch (error) {
         return res.status(400).json({ error: "Registration failed", details: error.message });
