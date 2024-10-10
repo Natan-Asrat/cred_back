@@ -28,6 +28,8 @@ app.post('/generate-registration-options', (req, res) => {
     });
 
     users.set(userID, { email: userEmail, credential: null }); // Initialize user record
+    console.log(options)
+    console.log(users)
     return res.json(options);
 });
 
