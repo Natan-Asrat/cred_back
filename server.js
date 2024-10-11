@@ -70,54 +70,66 @@ app.post('/register', async (req, res) => {
         return res.status(400).json({ error: "Registration failed", details: error.message });
     }
 });
-
 app.post('/generate-authentication-options', async (req, res) => {
-    const user = users.get(userID); // Get the user by userID
-    console.log("in generate-authentication-options");
-    console.log(user);
+    const user = users.get(userID);
+
     if (!user || !user.credential) {
-        return res.status(404).json({ error: "User not found or not registered" });
+        return res.status(400).send('User credentials not found');
     }
-    console.log("cred");
-    console.log(user.credential);
-    credential = {
-        ...user.credential,
-        authenticatorExtensionResults: user.credential.authenticatorExtensionResults !== undefined ? user.credential.authenticatorExtensionResults : ''
-    }
-    const challenge = crypto.randomBytes(32).toString('base64');
 
     const options = await generateAuthenticationOptions({
-        allowCredentials: [credential], // Allow only registered credentials
-        challenge: challenge, // Use a secure random challenge in production
+        rpID: 'cred-front.onrender.com',
+        allowCredentials: [
+            {
+                id: user.credential.credentialID,
+                type: 'public-key',
+                transports: ['usb', 'ble', 'nfc'],
+            },
+        ],
+        userVerification: 'preferred',
     });
-    user.challenge = challenge; // Save the challenge for next authentication
 
-    console.log("options");
-    console.log(options);
+    // Store the challenge with the user record
+    users.set(userID, { ...user, challenge: options.challenge });
 
     return res.json(options);
 });
 
 app.post('/authenticate', async (req, res) => {
-    const { response } = req.body;
-    const user = users.get(userID); // Get the user by userID
+    const { id, rawId, response, type } = req.body;
+    const user = users.get(userID);
 
     if (!user || !user.credential) {
-        return res.status(404).json({ error: "User not found or not registered" });
+        return res.status(400).send('User credentials not found');
     }
 
     try {
         const verification = await verifyAuthenticationResponse({
-            response,
-            expectedChallenge: user.challenge, // Must match the challenge used in generate-authentication-options
-            expectedOrigin: "https://cred-front.onrender.com", // Change to your actual domain
-            expectedRPID: "cred-front.onrender.com", // Change to your actual domain
+            credential: {
+                id,
+                rawId: isoUint8Array.fromBase64(rawId),
+                response: {
+                    authenticatorData: isoUint8Array.fromBase64(response.authenticatorData),
+                    clientDataJSON: isoUint8Array.fromBase64(response.clientDataJSON),
+                    signature: isoUint8Array.fromBase64(response.signature),
+                    userHandle: response.userHandle ? isoUint8Array.fromBase64(response.userHandle) : undefined,
+                },
+                type,
+            },
+            expectedChallenge: user.challenge,
+            expectedOrigin: 'https://cred-front.onrender.com',
+            expectedRPID: 'cred-front.onrender.com',
             authenticator: user.credential,
         });
 
-        return res.json({ status: "Authentication successful", user: userEmail });
+        if (verification.verified) {
+            return res.json({ verified: true });
+        } else {
+            return res.status(400).json({ verified: false });
+        }
     } catch (error) {
-        return res.status(400).json({ error: "Authentication failed", details: error.message });
+        console.error(error);
+        return res.status(500).send('Authentication verification failed');
     }
 });
 
