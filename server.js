@@ -82,7 +82,7 @@ app.post('/generate-authentication-options', async (req, res) => {
     console.log(user.credential);
     credential = {
         ...user.credential,
-        authenticatorExtensionResults: credential.authenticatorExtensionResults !== undefined ? credential.authenticatorExtensionResults : ''
+        authenticatorExtensionResults: user.credential.authenticatorExtensionResults !== undefined ? user.credential.authenticatorExtensionResults : ''
     }
     const challenge = crypto.randomBytes(32).toString('base64');
 
