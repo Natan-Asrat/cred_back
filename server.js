@@ -80,10 +80,14 @@ app.post('/generate-authentication-options', async (req, res) => {
     }
     console.log("cred");
     console.log(user.credential);
+    credential = {
+        ...user.credential,
+        authenticatorExtensionResults: credential.authenticatorExtensionResults !== undefined ? credential.authenticatorExtensionResults : ''
+    }
     const challenge = crypto.randomBytes(32).toString('base64');
 
     const options = await generateAuthenticationOptions({
-        allowCredentials: [user.credential], // Allow only registered credentials
+        allowCredentials: [credential], // Allow only registered credentials
         challenge: challenge, // Use a secure random challenge in production
     });
     user.challenge = challenge; // Save the challenge for next authentication
