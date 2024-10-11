@@ -72,7 +72,8 @@ app.post('/register', async (req, res) => {
     }
 });
 app.post('/generate-authentication-options', async (req, res) => {
-    const user = users.get(userID);
+    const { userEmail } = req.body;
+    const user = [...users.values()].find(user => user.email === userEmail);
 
     if (!user || !user.credential) {
         return res.status(400).send('User credentials not found');
