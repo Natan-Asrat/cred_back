@@ -12,10 +12,11 @@ app.use(cors({ origin: 'https://cred-front.onrender.com' }));
 const users = new Map(); // Store user credentials temporarily in memory
 
 // Hardcoded user info for demo
-const userEmail = "natsceo@gmail.com";
+// const userEmail = "natsceo@gmail.com";
 const userID = "user-id"; // Replace with any unique ID you want
 
 app.post('/generate-registration-options', async (req, res) => {
+    const { userEmail } = req.body;
     const options = await generateRegistrationOptions({
         rpName: "WebAuthDemo",
         rpID: "cred-front.onrender.com", // Change to your actual domain
