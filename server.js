@@ -81,7 +81,7 @@ app.post('/generate-authentication-options', async (req, res) => {
         rpID: 'cred-front.onrender.com',
         allowCredentials: [
             {
-                id: user.credential.credentialID,
+                id: user.credential.registrationInfo.credentialID,
                 type: 'public-key',
                 transports: ['usb', 'ble', 'nfc'],
             },
